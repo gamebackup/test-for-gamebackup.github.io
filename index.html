@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  </head>
+<body>
+  <h2 class="category-title">Popular Games</h2>
+  <div id="Popular-Games" class="game-grid"></div>
+
+  <h2 class="category-title">Flash Games</h2>
+  <div id="Flash-Games" class="game-grid"></div>
+
+  <h2 class="category-title">Action</h2>
+  <div id="Action" class="game-grid"></div>
+
+  <h2 class="category-title">Casual</h2>
+  <div id="Casual" class="game-grid"></div>
+
+  <h2 class="category-title">Driving</h2>
+  <div id="Driving" class="game-grid"></div>
+
+  <h2 class="category-title">Horror</h2>
+  <div id="Horror" class="game-grid"></div>
+
+  <h2 class="category-title">Multiplayer</h2>
+  <div id="Multiplayer" class="game-grid"></div>
+
+  <h2 class="category-title">Puzzle</h2>
+  <div id="Puzzle" class="game-grid"></div>
+
+  <h2 class="category-title">Shooting</h2>
+  <div id="Shooting" class="game-grid"></div>
+
+  <h2 class="category-title">Sports</h2>
+  <div id="Sports" class="game-grid"></div>
+
+  <h2 class="category-title">Strategy</h2>
+  <div id="Strategy" class="game-grid"></div>
+
+  <script>
+    // NEW: Automatic Game Loader
+    async function loadGames() {
+      try {
+        const response = await fetch('games.json');
+        const games = await response.json();
+
+        games.forEach(game => {
+          const categoryContainer = document.getElementById(game.category);
+          
+          if (categoryContainer) {
+            const button = document.createElement('button');
+            button.className = 'game-button';
+            button.innerText = game.title;
+            button.onclick = () => playGame(game.url);
+            
+            categoryContainer.appendChild(button);
+          }
+        });
+      } catch (error) {
+        console.log("No new games to load or games.json missing.");
+      }
+    }
+    window.addEventListener('DOMContentLoaded', loadGames);
+    function playGame(gameUrl) {
+      if (!gameUrl) {
+          alert("Placeholder: Game coming soon!");
+          return;
+      }
+      document.getElementById('game-overlay').style.display = 'block';
+      document.getElementById('game-frame').src = gameUrl;
+    }
+
+    function closeGame() {
+      document.getElementById('game-overlay').style.display = 'none';
+      document.getElementById('game-frame').src = '';
+    }
+  </script>
+</body>
+</html>

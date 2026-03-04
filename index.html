@@ -123,11 +123,66 @@
       #back-to-x3e:hover {
       opacity: 1;
       }
+      #settings-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      z-index: 1000;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 50%;
+      }
+      #settings-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      border: 2px solid #e61587;
+      z-index: 10001;
+      text-align: center;
+      color: white;
+}
+
+#settings-modal select {
+    padding: 10px;
+    margin-top: 15px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+}
     }
   </style>
 </head>
-  
 <body>
+  <div id="settings-btn" onclick="toggleSettings()">⚙️</div>
+
+<div id="modal-overlay" onclick="toggleSettings()"></div>
+<div id="settings-modal">
+    <h3>Tab Settings</h3>
+    <p>Choose your "Cloak" appearance:</p>
+    <select id="cloak-select" onchange="applyAndSaveSettings(this.value)">
+        <option value="google">Google</option>
+        <option value="youtube">YouTube</option>
+        <option value="wikipedia">Wikipedia</option>
+        <option value="classlink">Classlink</option>
+    </select>
+    <br><br>
+    <button onclick="toggleSettings()" style="padding: 10px 20px; cursor: pointer;">Close</button>
+</div>
   <header>
       <div style="display: flex; align-items: center; gap: 15px;">
     <img src="images/Cat-looks-inside-meme.png">
@@ -588,6 +643,40 @@
     All games featured on this site are the property of their respective copyright holders. This site is a fan-made, non-commercial site intended for educational and entertainment use. If you are a rights holder and wish to have your content removed, please contact us via our <a href="https://docs.google.com/forms/d/e/1FAIpQLSf2hOhnEVCMaJITOgmYvtjMql7U0AJSjFoSDfYErlvsZtSwDQ/viewform?usp=header" target="_blank" style="color: #d200ff;">DMCA</a> Form.
   </div>
   <script>
+    const settings = {
+    google: { title: "Google", favicon: "https://www.google.com/favicon.ico" },
+    youtube: { title: "YouTube", favicon: "https://www.youtube.com/favicon.ico" },
+    wikipedia: { title: "Wikipedia", favicon: "https://en.wikipedia.org/static/favicon/wikipedia.ico" },
+    classlink: { title: "Classlink", favicon: "https://www.classlink.com/favicon.ico" }
+};
+
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    const overlay = document.getElementById('modal-overlay');
+    const isVisible = modal.style.display === 'block';
+    modal.style.display = isVisible ? 'none' : 'block';
+    overlay.style.display = isVisible ? 'none' : 'block';
+}
+
+function applyAndSaveSettings(choice) {
+    const data = settings[choice];
+    if (!data) return;
+
+    document.title = data.title;
+    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = data.favicon;
+    document.getElementsByTagName('head')[0].appendChild(link);
+    localStorage.setItem('tabCloak', choice);
+}
+
+window.onload = function() {
+    const savedChoice = localStorage.getItem('tabCloak');
+    if (savedChoice) {
+        applyAndSaveSettings(savedChoice);
+        document.getElementById('cloak-select').value = savedChoice;
+    }
     function playGame(gameUrl) {
       if (!gameUrl) {
           alert("Placeholder: Game coming soon!");
